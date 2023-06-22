@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parts Search</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div id="search-section">
+        <div class="column">
+            <input type="text" id="itemCode" placeholder="Item Code">
+            <input type="text" id="summaryCode" placeholder="Summary Code">
+            <input type="text" id="keyword" placeholder="Keyword">
+            <input type="text" id="equipmentCategory" placeholder="Equipment Category">
+            <input type="text" id="equipmentCategoryCode" placeholder="Equipment Category Code">
+            <input type="text" id="destination" placeholder="Destination">
+        </div>
+        <div class="column">
+            <input type="date" id="salesStartDate" placeholder="Sales Start Date">
+            <input type="date" id="lastShipmentDate" placeholder="Last Shipment Date">
+            <input type="date" id="EOSLForecastDate" placeholder="EOSL Forecast Date">
+            <input type="date" id="EOSLDate" placeholder="EOSL Date">
+            <input type="text" id="serviceStatus" placeholder="Service Status">
+            <input type="date" id="repairEndDate" placeholder="Repair End Date">
+            <button id="searchBtn">Search</button>
+        </div>
+    </div>
+    <div id="results-section">
+        <!-- Search results will be populated here by JavaScript -->
+    </div>
+    <script src="js/searchComponent.js"></script>
+    <script src="js/resultsComponent.js"></script>
+    <script src="js/sortComponent.js"></script>
+    <script>
+        // Initialize components
+        const searchComponent = new SearchComponent();
+        const resultsComponent = new ResultsComponent();
+        const sortComponent = new SortComponent();
+
+        // Event listener for search button
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const criteria = searchComponent.getSearchCriteria();
+            searchComponent.search(criteria)
+                .then(results => {
+                    resultsComponent.displayResults(results);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+
+        // Event listener for results section
+        document.getElementById('results-section').addEventListener('click', (event) => {
+            if (event.target.classList.contains('sortable')) {
+                const column = event.target.dataset.column;
+                const sortedResults = sortComponent.sortResults(resultsComponent.results, column);
+                resultsComponent.displayResults(sortedResults);
+            }
+        });
+    </script>
+</body>
+</html>

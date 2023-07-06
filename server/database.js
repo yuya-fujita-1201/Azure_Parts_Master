@@ -1,23 +1,20 @@
-const sql = require('mssql');
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 
-const config = {
-    server: process.env.DB_SERVER,
-    database: process.env.DB_DATABASE,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    port: 1433,
-    options: {
-        encrypt: true,
-        enableArithAbort: true
+const app = express();
+
+app.use(cors());
+
+app.get('/api/subsidies', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.jgrants-portal.go.jp/exp/v1/public/subsidies');
+        res.send(response.data);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        res.status(500).send('Error occurred while fetching data');
     }
-};
+});
 
-async function getParts(query) {
-    let pool = await sql.connect(config);
-    let result = await pool.request().query(query);
-    return result.recordset;
-}
-
-module.exports = {
-    getParts
-};
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server is running on port ${port}`));
